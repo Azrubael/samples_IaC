@@ -1,0 +1,52 @@
+Vagrant.configure("2") do |config|
+  # config.vm.provision "shell", inline: "echo Hello"
+  # для работы с конфигурацией нескольких виртуальных машин важно использовать статические айпи адреса
+
+
+  config.vm.define "web01" do |web01|
+    web01.vm.box = "ubuntu/bionic64"
+    web01.vm.network "private_network", ip: "192.168.56.14"
+    
+    web01.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+    end
+    
+    web01.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y apache2 wget unzip
+      systemctl start apache2
+      systemctl enable apache2
+      cd /tmp/
+      wget 	https://www.tooplate.com/zip-templates/2119_gymso_fitness.zip
+      unzip -o 2119_gymso_fitness.zip
+      cp -r 2119_gymso_fitness/* /var/www/html/
+      systemctl restart apache2
+    SHELL
+  end
+
+
+  config.vm.define "db01" do |db01|
+    db01.vm.box = "centos/7"
+    db01.vm.network "private_network", ip: "192.168.56.16"
+    
+    # db01.vm.synced_folder ".", "/vagrant", disabled: true
+    # db01.vm.synced_folder "../../shared_directory", "/shared_directory"
+    
+    db01.vm.provider "virtualbox" do |vb|
+      vb.memory = "512"
+      vb.cpus = 1
+    end
+    
+    db01.vm.provision "shell", inline: <<-SHELL
+      yum install mariadb-server -y
+      systemctl start mariadb
+      systemctl enable mariadb
+
+      mysql -u root -e 'CREATE DATABASE wordpress;'
+      mysql -u root -e 'GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON wordpress.* TO wordpress@localhost IDENTIFIED BY "admin123";'
+      mysql -u root -e 'FLUSH PRIVILEGES;'
+    SHELL
+  end
+  
+end
