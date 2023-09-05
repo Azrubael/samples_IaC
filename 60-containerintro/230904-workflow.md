@@ -74,7 +74,8 @@ end
     $ mkdir /mnt/SSDATA/CODE/DevOpsCompl20/230904-containerintro/
     $ cd /mnt/SSDATA/CODE/DevOpsCompl20/230904-containerintro/
     $ vagrant up
-    $ mv -f /mnt/SSDATA/CODE/DevOpsCompl20/230904-containerintro/.vagrant/machines/default/virtualbox/private_key $HOME/.ssh/vagrant_230904_private_key
+    $ mv -f /mnt/.../.vagrant/machines/default/virtualbox/private_key $HOME/.ssh/vagrant_230904_private_key
+    $ ln -sr $HOME/.ssh/app01_private_key /mnt/.../private_key
     $ vagrant up --provision
     $ vagrant ssh
 
