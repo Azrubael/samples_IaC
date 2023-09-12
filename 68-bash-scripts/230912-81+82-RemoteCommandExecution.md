@@ -1,7 +1,7 @@
 # 2023-09-11    14:28
 =====================
-Remote Command Execution
-------------------------
+# Remote Command Execution
+--------------------------
 
 How we can execute command from `scriptbox` instance to `web01` and `web02`. And later we'll aso add one more machine `web03` which will be Ubuntu machine?
 
@@ -207,3 +207,55 @@ devops@web02's password:
 devops@web03's password: 
  14:34:59 up  1:13,  0 users,  load average: 0.00, 0.00, 0.00
 # была запущена команда на `web03` из `scriptbox` от имени `devops`
+
+
+
+
+# SSH Key Exchange.mp4
+----------------------
+Альтернативой входу по паролю является вход с применением ключа.
+Вход с применением ключа рассматривается, как более безопасный.
+Для применения ключа его необходимо сгенерировать командой `ssh-keygen`
+    $ vagrant reload
+    $ vagrant ssh scriptbox
+Last login: Mon Sep 11 14:21:08 2023 from 10.0.2.2
+[vagrant@scriptbox ~]$ sudo -i
+[root@scriptbox ~]# ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa.    <--- lock tool
+Your public key has been saved in /root/.ssh/id_rsa.pub.    <--- key tool
+The key fingerprint is:
+SHA256:OOQM75bHqnTHRoBxJPqvwYUGDGnM0wGQl5MAm/YA1pU root@scriptbox
+...
+
+[root@scriptbox ~]# ssh-copy-id devops@web01                <--- copy public key
+...
+    Number of key(s) added: 1
+Now try logging into the machine, with:   "ssh 'devops@web01'"
+and check to make sure that only the key(s) you wanted were added.
+[root@scriptbox ~]# ssh-copy-id devops@web02
+...
+    Number of key(s) added: 1
+Now try logging into the machine, with:   "ssh 'devops@web02'"
+and check to make sure that only the key(s) you wanted were added.
+[root@scriptbox ~]# ssh-copy-id devops@web03
+... 
+    Number of key(s) added: 1
+Now try logging into the machine, with:   "ssh 'devops@web03'"
+and check to make sure that only the key(s) you wanted were added.
+
+[root@scriptbox ~]#     <--- теперь выполним какую-то команду без пароля
+[root@scriptbox ~]# ssh devops@web01 uptime
+ 10:53:42 up 8 min,  0 users,  load average: 0.00, 0.02, 0.04
+[root@scriptbox ~]# ssh devops@web02 uptime
+ 10:53:48 up 8 min,  0 users,  load average: 0.00, 0.04, 0.05
+[root@scriptbox ~]# ssh devops@web03 uptime
+ 10:53:51 up 8 min,  0 users,  load average: 0.00, 0.12, 0.10
+ 
+ 
+# полная команда с указанием специфического публичного ключа
+[root@scriptbox ~]# ssh -i ~/.ssh/id_rsa devops@web01 uptime
+ 10:59:17 up 14 min,  0 users,  load average: 0.00, 0.01, 0.04
