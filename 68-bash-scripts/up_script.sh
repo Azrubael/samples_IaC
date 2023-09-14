@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Скрипт для автоматического сохранения ключей в рабочую папку ssh и создания для них ярлыков
+
 INSTANCES="scriptbox web01 web02 web03"
 
 for vm in $INSTANCES; do
