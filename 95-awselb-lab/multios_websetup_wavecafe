@@ -3,35 +3,32 @@
 # Развертывание простого веб-сервера с заготовкой сайта на Debian/RHEL
 
 # Variable Declaration
-URL='https://www.tooplate.com/zip-templates/2098_health.zip'
-ART_NAME='2098_health'
+URL='https://www.tooplate.com/zip-templates/2121_wave_cafe.zip'
+ART_NAME='2121_wave_cafe'
 TEMPDIR="/tmp/webfiles"
 SVC="httpd"
 
 yum --help $> /dev/null
 
+# Installing Dependencies
+echo "########################################"
+echo "Installing packages."
+echo "########################################"
+echo
+
 if [ $? -eq 0 ]; then
   # Set variables for CentOS
   echo "Running Setup on CentOS"
-  PACKAGE="httpd wget unzip"
-  # Installing Dependencies
-  echo "########################################"
-  echo "Installing packages."
-  echo "########################################"
+  PACKAGE="httpd wget unzip mc"
+  sudo yum update -y
   sudo yum install $PACKAGE -y > /dev/null
-  echo
 else
   # Set variables for Ubuntu
   echo "Running Setup on Ubuntu"
-  PACKAGE="apache2 wget unzip"
+  PACKAGE="apache2 wget unzip mc"
   SVC="apache2"
-  # Installing Dependencies
-  echo "########################################"
-  echo "Installing packages."
-  echo "########################################"
   sudo apt-get update -y
   sudo apt-get install $PACKAGE -y > /dev/null
-  echo
 fi
 
 # Start & Enable Service
