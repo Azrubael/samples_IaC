@@ -8,7 +8,6 @@ ART_NAME='2121_wave_cafe'
 TEMPDIR="/tmp/webfiles"
 SVC="httpd"
 
-yum --help $> /dev/null
 
 # Installing Dependencies
 echo "########################################"
@@ -16,6 +15,7 @@ echo "Installing packages."
 echo "########################################"
 echo
 
+yum --help $> /dev/null
 if [ $? -eq 0 ]; then
   # Set variables for CentOS
   echo "Running Setup on CentOS"
