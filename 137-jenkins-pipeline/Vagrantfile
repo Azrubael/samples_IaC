@@ -1,0 +1,44 @@
+Vagrant.configure("2") do |config|
+  config.hostmanager.enabled = true 
+  config.hostmanager.manage_host = true
+  
+### Jenkins VM  ####
+  config.vm.define "jvm" do |jvm|
+    jvm.vm.box = "ubuntu/jammy64"
+    jvm.vm.hostname = "jvm"
+    jvm.vm.network "private_network", ip: "192.168.56.11"
+    jvm.vm.synced_folder ".", "/vagrant" #, disabled: true
+    jvm.vm.provider "virtualbox" do |vb|
+      vb.memory = "2400"
+      vb.cpus = 1
+    end
+    jvm.vm.provision "shell", path: "./userdata/jenkins-setup"  
+  end
+  
+### Nexus VM  #### 
+  config.vm.define "nvm" do |nvm|
+    nvm.vm.box = "centos/7"
+    nvm.vm.hostname = "mc01"
+    nvm.vm.network "private_network", ip: "192.168.56.12"
+    nvm.vm.synced_folder ".", "/vagrant" #, disabled: true
+    nvm.vm.provider "virtualbox" do |vb|
+      vb.memory = "800"
+      vb.cpus = 1
+    end
+    nvm.vm.provision "shell", path: "./userdata/nexus-setup"  
+  end
+
+### tomcat vm ###
+  config.vm.define "svm" do |svm|
+    svm.vm.box = "ubuntu/jammy64"
+    svm.vm.hostname = "app01"
+    svm.vm.network "private_network", ip: "192.168.56.12"
+    svm.vm.synced_folder ".", "/vagrant" #, disabled: true
+    svm.vm.provision "shell", path: "./userdata/sonar-setup"  
+    svm.vm.provider "virtualbox" do |vb|
+      vb.memory = "2400"
+      vb.cpus = 1
+    end
+  end
+
+end
