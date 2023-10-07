@@ -1,9 +1,10 @@
 #!/bin/bash
 
 sudo apt-get update
-# sudo apt upgrade -y --fix-missing       # only for old images
-sudo apt-get install openjdk-17-jdk -y --fix-missing
+sudo apt-get upgrade -y
+sudo apt-get install openjdk-17-jdk -y
 sudo apt-get update
+sudo apt-get upgrade -y
 sudo apt-get install maven -y
 curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
 /usr/share/keyrings/jenkins-keyring.asc > /dev/null
@@ -15,8 +16,8 @@ sudo apt-get update
 sudo apt-get install jenkins -y
 
 # Эти команды для Vagrant_2.3.7 & VirtualBOX_6.1
-# приходилось запускать вручную
-# sudo apt-get update                    # only for old images
-# sudo apt-get upgrade -y --fix-missing  # only for old images
-# sudo apt install openjdk-11-jdk -y --fix-missing
+# пришлось запускать вручную
+sudo apt-get update
+sudo apt-get install openjdk-11-jdk -y
 # sudo update-alternatives --config java
+# curl http://169.254.169.254/latest/user-data

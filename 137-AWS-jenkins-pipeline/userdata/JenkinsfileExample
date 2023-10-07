@@ -1,0 +1,53 @@
+pipeline{
+    agent{         //the definition where the job is qoing to run
+        label "master"      //or "slave"
+                            //or you can just the agent "any" also
+    }
+    tools{  //you can mentioned tools like SonarScanner or Maven or JDK
+        maven "Maven"
+    }
+    environment{  //corresponding environment variables
+        NEXUS_VERSION = "nexus3"
+        NEXUS_PROTOCOL =
+        NEXUS_URL = "youe-ip-addr:8081"
+        NEXUS_REPOSITORY = "maven-nexus-repo"
+        NEXUS_CREDENTIAL_ID = "nexus-user-credentials"
+        ARTIFACT_VERSION = "${env.BUILD_ID}"
+    }
+    stages{       //what is going to execute in our job
+        stage("Clone") {
+            ...  //Clone code from VCS
+        }
+        stage("BuildAndTest"){
+            steps{
+                sh "mvn install"
+            }
+            post{
+                success{
+                    echo "Now Archiving..."
+                    archiveArtifacts artifacts: "**/target/*.war"
+                }
+            }
+        }
+        stage("Publish"){  //Publish to Nexus Repository Manager
+            steps{
+            ...   //
+            }
+        }
+        stage("Test"){
+            steps{
+            ...   //
+            }
+        }
+        stage("Deploy"){
+            steps{
+                  //
+            }
+            post{
+                success{
+                    ... //
+                }
+            }
+        }
+    }
+}
