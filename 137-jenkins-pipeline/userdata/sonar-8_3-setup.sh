@@ -1,33 +1,28 @@
 #!/bin/bash
-
-sudo apt-get update
-
-# https://www.howtoforge.com/how-to-install-sonarqube-on-ubuntu-22-04/
 cp /etc/sysctl.conf /root/sysctl.conf_backup
 cat <<EOT> /etc/sysctl.conf
-vm.max_map_count=524288
-fs.file-max=131072
-ulimit -n 131072
-ulimit -u 8192
+vm.max_map_count=262144
+fs.file-max=65536
+ulimit -n 65536
+ulimit -u 4096
 EOT
-
 cp /etc/security/limits.conf /root/sec_limit.conf_backup
 cat <<EOT> /etc/security/limits.conf
-sonarqube   -   nofile   131072
-sonarqube   -   nproc    8192
+sonarqube   -   nofile   65536
+sonarqube   -   nproc    409
 EOT
 
-# to apply new changes on the '/etc/sysctl.conf' file
-sudo sysctl --system
+sudo apt-get update -y
+sudo apt-get install openjdk-11-jdk -y
+sudo update-alternatives --config java
 
-sudo apt-get update
-sudo apt-get install openjdk-17-jdk -y --fix-missing
+java -version
 
-sudo apt-get update
+sudo apt update
 wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
 
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
-sudo apt-get install postgresql postgresql-contrib -y
+sudo apt install postgresql postgresql-contrib -y
 #sudo -u postgres psql -c "SELECT version();"
 sudo systemctl enable postgresql.service
 sudo systemctl start  postgresql.service
@@ -37,14 +32,14 @@ sudo -i -u postgres psql -c "ALTER USER sonar WITH ENCRYPTED PASSWORD 'admin123'
 sudo -i -u postgres psql -c "CREATE DATABASE sonarqube OWNER sonar;"
 sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE sonarqube to sonar;"
 systemctl restart  postgresql
-# systemctl status -l   postgresql
-# netstat -tulpena | grep postgres
+#systemctl status -l   postgresql
+netstat -tulpena | grep postgres
 sudo mkdir -p /sonarqube/
 cd /sonarqube/
-sudo curl -O https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.2.1.78527.zip
+sudo curl -O https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.3.0.34182.zip
 sudo apt-get install zip -y
-sudo unzip -o sonarqube-10.2.1.78527.zip -d /opt/
-sudo mv /opt/sonarqube-10.2.1.78527/ /opt/sonarqube
+sudo unzip -o sonarqube-8.3.0.34182.zip -d /opt/
+sudo mv /opt/sonarqube-8.3.0.34182/ /opt/sonarqube
 sudo groupadd sonar
 sudo useradd -c "SonarQube - User" -d /opt/sonarqube/ -g sonar sonar
 sudo chown sonar:sonar /opt/sonarqube/ -R
@@ -53,7 +48,7 @@ cat <<EOT> /opt/sonarqube/conf/sonar.properties
 sonar.jdbc.username=sonar
 sonar.jdbc.password=admin123
 sonar.jdbc.url=jdbc:postgresql://localhost/sonarqube
-sonar.web.host=127.0.0.1
+sonar.web.host=0.0.0.0
 sonar.web.port=9000
 sonar.web.javaAdditionalOpts=-server
 sonar.search.javaOpts=-Xmx512m -Xms512m -XX:+HeapDumpOnOutOfMemoryError
@@ -88,13 +83,13 @@ systemctl daemon-reload
 systemctl enable sonarqube.service
 #systemctl start sonarqube.service
 #systemctl status -l sonarqube.service
-sudo apt-get install nginx -y
+apt-get install nginx -y
 rm -rf /etc/nginx/sites-enabled/default
 rm -rf /etc/nginx/sites-available/default
 cat <<EOT> /etc/nginx/sites-available/sonarqube
 server{
     listen      80;
-    server_name sonarqube.azrubael.online;
+    server_name sonarqube.groophy.in;
 
     access_log  /var/log/nginx/sonar.access.log;
     error_log   /var/log/nginx/sonar.error.log;
@@ -107,23 +102,18 @@ server{
         proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
         proxy_redirect off;
               
-        proxy_set_header    Host $host;
-        proxy_set_header    X-Real-IP $remote_addr;
-        proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header    Host            \$host;
+        proxy_set_header    X-Real-IP       \$remote_addr;
+        proxy_set_header    X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header    X-Forwarded-Proto http;
     }
 }
 EOT
-sudo ln -s /etc/nginx/sites-available/sonarqube /etc/nginx/sites-enabled/sonarqube
+ln -s /etc/nginx/sites-available/sonarqube /etc/nginx/sites-enabled/sonarqube
 systemctl enable nginx.service
 #systemctl restart nginx.service
 sudo ufw allow 80,9000,9001/tcp
 
-echo 'export PATH="$PATH:/usr/lib/jvm/java-17-openjdk-amd64/"' >> /etc/profile
-echo 'export SONAR_JAVA_PATH="$PATH:/usr/bin/java"' >> /etc/profile
-
-echo "System reboot in 20 sec"
-sleep 20
+echo "System reboot in 30 sec"
+sleep 30
 reboot
-
-# sudo update-alternatives --config java
