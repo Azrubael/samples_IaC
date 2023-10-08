@@ -31,17 +31,17 @@ pipeline {
         // SonarQube scans the code
         // and uploads all the reports on SonarQube server
             environment {
-                scannerHome = tool 'sonar4.7'
-                JAVA_HOME='/usr/lib/jvm/java-11-openjdk-amd64/'
+                scannerHome = tool 'sonar481'
             }
             steps {
                 withSonarQubeEnv('sonar') {  // SonarQube server declaration
-                    sh '''${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=vprofile \
+                    sh '''${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=vprofile \
                     -Dsonar.projectName=vprofile-repo \
                     -Dsonar.projectVersion=1.0 \
                     -Dsonar.sources=src/ \
                     -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/ \
-                    -Dsonar.junit.reportsPath=target/surefile-reports/ \
+                    -Dsonar.junit.reportsPath=target/surefire-reports/ \
                     -Dsonar.jacoco.reportsPath=target/jacoco.exec \
                     -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
                     '''
