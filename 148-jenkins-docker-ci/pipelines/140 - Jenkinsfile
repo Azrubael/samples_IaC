@@ -1,9 +1,8 @@
 pipeline {
-    // A simple 'pipeline-as-code' jenkins job with MAVEN
-    // Checkstyle Analysis
+// An example of a simple 'pipeline-as-code' jenkins job
     agent any
     environment{
-        JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/"
+        JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
     }
     stages {
         stage('Fetch code') {
@@ -20,11 +19,6 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'mvn test'
-            }
-        }
-        stage('Checkstyle Analysis') {
-            steps {
-                sh 'mvn checkstyle:checkstyle'
             }
         }
     }

@@ -4,8 +4,7 @@ Vagrant.configure("2") do |config|
   
 ### Jenkins VM  ####
   config.vm.define "jvm" do |jvm|
-    # jvm.vm.box = "ubuntu/jammy64"           #Ubuntu 22.04 LTS
-    jvm.vm.box = "bento/ubuntu-20.04"        #Ubuntu 20.04 LTS
+    jvm.vm.box = "bento/ubuntu-20.04"        #Ubuntu 20.04 LTS focal
     jvm.vm.box_version = "202309.09.0"
     jvm.vm.hostname = "jvm01"
     jvm.vm.network "private_network", ip: "192.168.56.11"
@@ -14,7 +13,7 @@ Vagrant.configure("2") do |config|
       vb.memory = "4200"
       vb.cpus = 1
     end
-    jvm.vm.provision "shell", path: "./userdata/jenkins-setup"  
+    jvm.vm.provision "shell", path: "./scripts/jenkins-setup"  
   end
   
 ### Nexus VM  #### 
@@ -22,23 +21,19 @@ Vagrant.configure("2") do |config|
     nvm.vm.box = "centos/7"
     nvm.vm.hostname = "nvm01"
     nvm.vm.network "private_network", ip: "192.168.56.12"
-    # nvm.vm.synced_folder ".", "/vagrant"    #, disabled: true
     nvm.vm.provider "virtualbox" do |vb|
       vb.memory = "2500"
-      vb.cpus = 1
     end
-    nvm.vm.provision "shell", path: "./userdata/nexus-setup"  
+    nvm.vm.provision "shell", path: "./scripts/nexus-setup"  
   end
 
 ### SonarQube VM ###
   config.vm.define "svm" do |svm|
-    # svm.vm.box = "ubuntu/jammy64"           #Ubuntu 22.04 LTS
-    svm.vm.box = "bento/ubuntu-20.04"        #Ubuntu 20.04 LTS
+    svm.vm.box = "bento/ubuntu-20.04"        #Ubuntu 20.04 LTS focal
     svm.vm.box_version = "202309.09.0"
     svm.vm.hostname = "svm01"
     svm.vm.network "private_network", ip: "192.168.56.19"
-    # svm.vm.synced_folder ".", "/vagrant"    #, disabled: true
-    svm.vm.provision "shell", path: "./userdata/sonar-8_9-setup"  
+    svm.vm.provision "shell", path: "./scripts/sonar-8_9-setup"  
     svm.vm.provider "virtualbox" do |vb|
       vb.memory = "4200"
       vb.cpus = 1

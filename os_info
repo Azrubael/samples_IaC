@@ -1,5 +1,5 @@
 #!/bin/bash
-# элементарный скрипт для сбора информации о системе
+# A basic script for collecting information about the system
 line="---------------------------------------------"
 cat /etc/os-release; echo $line
 echo "Current time: $(date)"; echo $line
