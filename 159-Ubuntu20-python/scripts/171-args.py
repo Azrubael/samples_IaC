@@ -12,11 +12,6 @@ def order_food(min_order, *args):
     print("Your food will be delivered in 30 minutes,")
     print("Enjoy Your party!")
 
-
-def time_activity(min_order, *args):
-"""A function with keyworded arguments *kwargs"""
-    
-
     
 order_food("Salad", "Pizza", "Biryani", "Soup")
 print("8"*20)
