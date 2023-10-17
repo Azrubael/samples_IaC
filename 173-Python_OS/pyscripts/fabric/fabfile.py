@@ -17,5 +17,10 @@ def remote_exec():
     print("Get System Info --------------------------")
     run("hostname")
     run("uptime")
-    run("ps -eF")
-    run("du -ht 1M /home -d3")
+    # run("ps -eF")
+    # run("du -ht 1M /home -d3")
+    
+    sudo("yum install mariadb-server -y")
+    sudo("systemctl start mariadb")
+    sudo("systemctl enable mariadb")
+
