@@ -1,0 +1,18 @@
+---
+- name: Setup DBServer
+  hosts: dbsrvgrp
+  become: yes
+  tasks:
+  - name: Stop & Disable mariadb service
+    service:
+      name: mariadb
+      state: stopped
+      enabled: no
+  - name: Remove Python MySQL dependency
+    yum:
+      name: MySQL-python
+      state: absent
+  - name: Remove MySQL server
+    yum:
+      name: mariadb-server
+      state: absent
