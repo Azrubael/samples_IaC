@@ -2,9 +2,9 @@
 - name: Understanding precedence of variables
   hosts: all
   become: yes
-  vars:
-    USRNM: 'playuser'
-    COMM: 'A variable from the playbook'
+  #vars:
+  #  USRNM: 'playuser'
+  #  COMM: 'A variable from the playbook'
   tasks:
   - name: Create a user
     user:
