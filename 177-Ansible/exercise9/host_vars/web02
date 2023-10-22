@@ -1,0 +1,5 @@
+# Variables accessible only by web02 host
+# They have the highest priority from *Inventory Based*
+USRNM: 'web02user'
+COMM: 'Variable from host_vars/db02 file'
+

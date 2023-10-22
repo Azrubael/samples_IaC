@@ -1,4 +1,4 @@
-Сборник справочных материалов для развертывания витруальных машин средствами Oracle VirtualBox & Vagrant. Составлен по итогам освоения дорожной карты ДевОпс 2022.
+Сборник справочных материалов для развертывания витруальных машин средствами Oracle VirtualBox & Vagrant, а также Amazon AWS. Составлен по итогам освоения дорожной карты ДевОпс 2022.
 
 СОДЕРЖАНИЕ
 ----------
@@ -11,4 +11,6 @@
 - wordpress_ubuntu20/     - сценарий Vagrant для запуска витруального компьютера Ubuntu20+Apache2+Wordpress;
 - Vagrantfile_CentOS7     - пример простого сценария Vagrant для CentOS7;
 - Vagrantfile_centos7_uh  - пример простого сценария Vagrant для CentOS7+httpd;
-- Vagrantfile_ubuntu18+go - CentOS7+go1.21+mc.
+- Vagrantfile_ubuntu18+go - CentOS7+go1.21+mc;
+
+...а потом чем дальше, тем все глубже и глубже ;о)

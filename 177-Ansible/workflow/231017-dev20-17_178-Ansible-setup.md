@@ -15,6 +15,8 @@ https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.
 # Ubuntu Server 18.04 LTS
 Ubuntu 18.04 Server Packaged by IOanyT Innovations
 IOanyT Innovations, Inc.
+# AMI ID: ami-010b814555e3268fa
+
 # Control Machine - 1 pcs
 > AWS > EC2 > Launch instance > t2.micro > { 'Instances': 1 }
     { 'Name': 'Control Machine'; 'OS': 'ubuntu-18'; 'Flavour': 'bionic' } >
