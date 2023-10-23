@@ -1,0 +1,26 @@
+---
+- name: Provisionng Server
+  hosts: all
+  become: true
+  tasks:
+    - name: Check distro
+      debug:
+        var: ansible_distribution
+
+    - name: Create a new directory for developers data
+      file:
+        path: /opt/devdata
+        state: directory
+        mode: 0775
+
+    - name: Touch a file using smbolic modes to set the permissions (0444)
+      file:
+        path: /opt/devdata/anewfile.txt
+        state: touch
+        mode: u=r,g=r,o=r
+
+    - name: Touch the same file but add/remove permissons
+      file:
+        path: /opt/devdata/anewfile.txt
+        state: touch
+        mode: u+w,g+x,o+x
