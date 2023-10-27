@@ -1,0 +1,32 @@
+# each time this script is run, one new instance t2.micro
+# will be launched with Amazon Linux 2023
+#
+- hosts: localhost
+  gather_facts: False
+  tasks:
+    - name: Create a key pair
+      ec2_key:
+        name: sample
+        region: us-east-1
+      register: keyout
+    #- name: Print the key
+    #  debug:
+    #    var: keyout
+
+    - name: Save the key
+      copy:
+        content: "{{keyout.key.private_key}}"
+        dest: ./sample.pem
+      when: keyout.changed == True
+
+    - name: Launch EC2 instance
+      ec2:
+        key_name: sample
+        instance_type: t2.micro
+        # Amazon Linux 2023 AMI 2023.2.20231018.2 x86_64 HVM kernel-6.1
+        image: ami-0dbc3d7bc646e8516
+        region: us-east-1
+        wait: yes
+        count: 1 
+        # vpc_subnet_id: subnet-29e63245
+        # assign_public_ip: yes

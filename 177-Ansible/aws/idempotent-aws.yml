@@ -1,0 +1,34 @@
+---
+- name: Setup keypair and run AWS EC2 instance
+  hosts: localhost
+  gather_facts: False
+  tasks:
+    - name: Create a key pair
+      ec2_key:
+        name: sample
+        region: us-east-1
+      register: keyout
+    # - debug:
+    #   var: keyout
+
+    - name: Save the key
+      copy:
+        content: "{{keyout.key.private_key}}"
+        dest: ./sample-key.pem
+      when: keyout.changed
+
+    - name: Launch EC2 instance
+      ec2:
+        key_name: sample
+        instance_type: t2.micro
+        # CentOS 7 (x86_64) - with Updates HVM
+        image: ami-002070d43b0a4f171
+        region: us-east-1
+        wait: yes
+        exact_count: 1
+        instance_tags:
+          Name: db01
+          db: postgres
+        count_tag:
+          Name: db01
+          db: postgres
