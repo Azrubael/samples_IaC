@@ -1,0 +1,6 @@
+---
+- name: Provisionng Server
+  hosts: all
+  become: true
+  roles:
+    - post-install
