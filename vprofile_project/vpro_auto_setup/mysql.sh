@@ -4,7 +4,6 @@ sudo yum update -y
 sudo yum install -y epel-release -y
 sudo yum install git -y
 sudo yum install unzip -y
-sudo yum install mc -y
 sudo yum install mariadb-server -y
 
 sudo echo "## vagrant-hostmanager-start
