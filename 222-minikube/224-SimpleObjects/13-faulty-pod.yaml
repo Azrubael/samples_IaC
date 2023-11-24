@@ -1,0 +1,11 @@
+# Create a faulty pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx12
+spec:
+  containers:
+  - name: nginx
+    image: nginox:1.14.2
+    ports:
+    - containerPort: 80
