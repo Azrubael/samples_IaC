@@ -1,0 +1,25 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-demo
+  labels:
+    purpose: demo
+
+spec:
+  selector:
+    matchLabels:
+      component: hello-world-demo
+  template:
+    metadata:
+      labels:
+        component: hello-world-demo
+    spec:
+      containers:
+        - name: command-demo-container
+          image: debian
+          env:
+            - name: MESSAGE
+              value: "hello world"
+          command: ["/bin/echo"]
+          args: ["$(MESSAGE)"]
