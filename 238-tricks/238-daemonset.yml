@@ -1,3 +1,5 @@
+    $ vim 238-daemonset.yml
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
