@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "kalilinux/rolling"
+
+  config.vm.network "private_network", ip: '192.168.56.99' #, type: "dhcp"
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048
+    vb.cpus = 1
+    vb.gui = true
+  end
+
+  config.vm.provision "shell", inline: <<-EOF
+    sudo apt update
+    sudo apt install -y crowbar
+  EOF
+
+end
+
+# The box as "generic/debian11" provides a *base for Kali Linux*.
+# We set the provider as VirtualBox and customize the VM settings to allocate 2048 MB of memory and 1 CPU.
+# We enable the GUI mode by setting vb.gui = true.
+# We configure a private network with DHCP and a synced folder.
