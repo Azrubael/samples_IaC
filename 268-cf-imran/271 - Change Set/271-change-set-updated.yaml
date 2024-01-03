@@ -1,0 +1,13 @@
+---
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-002070d43b0a4f171  # Centos7  us-east-1
+      Tags:
+        - Key: "Name"
+          # Value: !Join [ "-", [Lets,C,Changeset] ]
+          Value: "change-7"
+        - Key: "Project"
+          Value: "Imran-7"

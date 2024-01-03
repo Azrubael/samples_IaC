@@ -1,0 +1,56 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Transform: 'AWS::LanguageExtensions'
+Parameters:
+  Stage:
+    Type: String
+    Default: Dev
+    AllowedValues:
+      - Dev
+      - Prod
+Conditions:
+  isProd: !Equals 
+    - !Ref Stage
+    - Prod
+  isDev: !Equals 
+    - !Ref Stage
+    - Dev
+Resources:
+  DevQueue:
+    Type: 'AWS::SQS::Queue'
+    Condition: isDev
+    Properties:
+      QueueName: !Sub 'My${Stage}Queue'
+  ProdQueue:
+    Type: 'AWS::SQS::Queue'
+    Condition: isProd
+    Properties:
+      QueueName: !Sub 'My${Stage}Queue'
+  DevTopic:
+    Condition: isDev
+    Type: 'AWS::SNS::Topic'
+  ProdTopic:
+    Condition: isProd
+    Type: 'AWS::SNS::Topic'
+  MyAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmDescription: Alarm if queue depth grows beyond 10 messages
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: !Sub '${Stage}Queue'
+          Value: !GetAtt 
+            - !Sub '${Stage}Queue'
+            - QueueName
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 10
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref 
+          'Fn::Join':
+            - ''
+            - - !Ref Stage
+              - Topic
