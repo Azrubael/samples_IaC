@@ -12,7 +12,7 @@ Resources:
       SecurityGroups:
         - !Ref SSHSecurityGroup
         - !Ref ServerSecurityGroup
-      KeyName: 230724-ec2-t2micro
+      KeyName: CF-key
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash

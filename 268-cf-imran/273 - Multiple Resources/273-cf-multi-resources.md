@@ -39,38 +39,47 @@ InstanceSecurityGroup:
 
   $ vim multiresource.yaml
 ---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  CloudFormation template to create EC2 instance with security group
 Resources:
-  MyInstance:
+  EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
+      AvailabilityZone: us-east-1a
+      ImageId:  ami-010b814555e3268fa  # Ubuntu18.04  us-east-1
       InstanceType: t2.micro
-      ImageId:  ami-00b8917ae86a424c9  # Amazon Linux 2  us-east-1
+      SecurityGroups:
+        - !Ref VprofileSG
+      KeyName: 230724-ec2-t2micro
+      UserData:
+        Fn::Base64: !Sub |
+         #!/bin/bash
+         sudo apt install wget curl -y
       Tags:
         - Key: "Name"
           Value: !Join [ "-", [my,inst,from,AWS,CloudFormation] ]
-      SecurityGroups:
-        - !Ref VprofileSG
-      
   VprofileSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow sh & http from MyIP
-      # VpcId: !Ref myVPC
+      GroupDescription: Allow ssh from MyIP & http to all IPv4
+      GroupName: Vprofile-SG
+      # VpcId: !Ref MyVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 80
+          FromPort: 80 
           ToPort: 80
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 188.163.109.118/32
-
-      SecurityGroupEgress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
           CidrIp: 0.0.0.0/0
+      # SecurityGroupEgress:
+      #   - IpProtocol: tcp
+      #     FromPort: 80
+      #     ToPort: 80
+      #     CidrIp: 0.0.0.0/0
+
 
 
 [05:05]
