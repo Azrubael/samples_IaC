@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  CloudFormation template with example of a WsbServer CloudFormation stack
+
+Parameters:
+  NameOfService:
+    Description: "The name of the service this stack is to be used for."
+    Type: String
+  InstanceTypeParameter:
+    Description: Enter t2.micro, t2.small or t2.medium
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+  KeysNames:
+    Description: Name of EC2 login key
+    Type: AWS::EC2::KeyPair::KeyName
+
+Mappings: 
+  AmiRegionMap: 
+    us-east-1:      # Amazon Linix 2 
+      AMI: "ami-00b8917ae86a424c9"
+    eu-west-3:      # Paris
+      AMI: "ami-072a132dda549474e"
+    eu-central-1:   # Frankfurt
+      AMI: "ami-02da8ff11275b7907"
+
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init: 
+        config:
+          packages: 
+            yum:
+              httpd: []
+              php: []
+              wget: []
+              unzip: []
+              git: []
+          # groups:   ### if you wan to do something with groups
+          # users:    ### if you wan to do something with users
+          files:
+            /var/www/html/hello.html:
+              content: !Sub |
+                <!DOCTYPE html>
+                <html>
+                <body>
+                <h1>Welcome to Cloudformatio!</h1>
+                <p>This site is deployed by AWS CloudFormation.</p>
+                </body>
+                </html>
+          commands:
+            test:
+              command: "wget https://www.tooplate.com/zip-templates/2119_gymso_fitness.zip && unzip 2119_gymso_fitness.zip && cp -r 2119_gymso_fitness/* /var/www/html/"
+          services: 
+            sysvinit:
+              httpd:
+                enabled: true
+                ensureRunning: true
+    Properties:
+      ImageId:  !FindInMap
+        - AmiRegionMap
+        - !Ref AWS::Region
+        - AMI
+      InstanceType: !Ref InstanceTypeParameter
+      KeyName: !Ref KeysNames
+      SecurityGroups:
+        - !Ref VprofileSG
+      UserData:         ##### It doesn't needed anymore, see Metadata!
+        'Fn::Base64':
+          !Sub |
+            #!/bin/bash -xe
+            # Ensure AWS CFN Bootstrap is the latest
+            yum install -y aws-cfn-bootstrap
+            # Install the files and packages from the metadata
+            # this should execute your any data
+            /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource EC2Instance --region ${AWS::Region}
+            # to get a signal that everything is Ok. We can see a non-zero signal, if our stack is failing
+            /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource EC2Instance --region ${AWS::Region}
+      Tags:
+        - Key: "Name"
+          Value: !Ref NameOfService
+
+  VprofileSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow ssh from MyIP & http to all IPv4
+      GroupName: Vprofile-SG
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80 
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443 
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 188.163.109.118/32
+
+# AWS::EC2::Instance
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-instance.html
+Outputs:
+  PrintSomeINFO:
+    Value: !GetAtt
+      - EC2Instance
+      - PublicDnsName
+
